@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Confirmed | NexForm 3D Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --orange: #FF6B00;
+      --orange-dark: #CC5500;
+      --grey-900: #111111;
+      --grey-800: #1e1e1e;
+      --grey-700: #2d2d2d;
+      --grey-600: #3d3d3d;
+      --grey-400: #888888;
+      --grey-200: #cccccc;
+      --white: #f5f5f5;
+      --green: #2e7d32;
+      --green-light: #43a047;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--grey-900); color: var(--white); font-family: 'Barlow', sans-serif; font-weight: 300; min-height: 100vh; }
+
+    nav {
+      background: var(--grey-800); border-bottom: 3px solid var(--orange);
+      padding: 0 40px; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 2px; color: var(--white); text-decoration: none; }
+    .logo span { color: var(--orange); }
+    .nav-user { font-size: 13px; color: var(--grey-400); display: flex; align-items: center; gap: 16px; }
+    .nav-user strong { color: var(--orange); }
+    .logout-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--grey-400); background: none; border: 1px solid var(--grey-600); padding: 6px 14px; cursor: pointer; transition: all 0.2s; }
+    .logout-btn:hover { color: var(--white); border-color: var(--white); }
+
+    /* SUCCESS BANNER */
+    .success-banner {
+      background: linear-gradient(135deg, #1b5e20, #2e7d32);
+      border-bottom: 4px solid var(--orange);
+      padding: 60px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .success-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,0.02) 30px, rgba(255,255,255,0.02) 60px);
+    }
+    .check-circle {
+      width: 80px; height: 80px;
+      background: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; margin: 0 auto 24px;
+      position: relative; z-index: 1;
+      animation: pop 0.4s ease-out;
+    }
+    @keyframes pop { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+    .success-banner h1 {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 56px; font-weight: 800;
+      text-transform: uppercase; line-height: 1;
+      position: relative; z-index: 1; margin-bottom: 12px;
+    }
+    .success-banner p { font-size: 16px; color: rgba(255,255,255,0.75); position: relative; z-index: 1; }
+    .order-id-badge {
+      display: inline-block;
+      background: var(--orange); color: var(--grey-900);
+      font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 800;
+      letter-spacing: 3px; padding: 8px 24px; margin-top: 20px;
+      position: relative; z-index: 1;
+    }
+
+    /* MAIN CONTENT */
+    .main { max-width: 1000px; margin: 0 auto; padding: 60px 40px; }
+
+    .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 700; text-transform: uppercase; margin-bottom: 24px; }
+
+    /* ORDER SUMMARY TABLE */
+    .order-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+    .order-table tr { border-bottom: 1px solid var(--grey-700); }
+    .order-table tr:last-child { border-bottom: none; }
+    .order-table td { padding: 14px 20px; font-size: 14px; }
+    .order-table td:first-child { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--grey-400); background: var(--grey-800); width: 200px; }
+    .order-table td:last-child { color: var(--white); background: var(--grey-700); font-weight: 400; }
+    .total-td { font-family: 'Barlow Condensed', sans-serif; font-size: 28px !important; font-weight: 800 !important; color: var(--orange) !important; }
+
+    /* TIMELINE */
+    .timeline { position: relative; padding-left: 40px; margin-bottom: 50px; }
+    .timeline::before { content: ''; position: absolute; left: 14px; top: 0; bottom: 0; width: 2px; background: var(--grey-700); }
+    .timeline-step { position: relative; margin-bottom: 30px; }
+    .timeline-step:last-child { margin-bottom: 0; }
+    .t-dot {
+      position: absolute; left: -40px; top: 4px;
+      width: 28px; height: 28px;
+      background: var(--grey-700); border: 2px solid var(--grey-600);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+    }
+    .timeline-step.done .t-dot { background: var(--orange); border-color: var(--orange); color: var(--grey-900); }
+    .timeline-step.pending .t-dot { background: var(--grey-700); }
+    .t-title { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .t-desc { font-size: 13px; color: var(--grey-400); margin-top: 4px; }
+    .t-time { font-size: 12px; color: var(--orange); margin-top: 4px; font-weight: 500; }
+
+    /* ACTIONS */
+    .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 50px; border-top: 1px solid var(--grey-700); padding-top: 40px; }
+    .btn { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; padding: 14px 28px; display: inline-block; transition: all 0.2s; cursor: pointer; border: none; }
+    .btn-primary { background: var(--orange); color: var(--grey-900); }
+    .btn-primary:hover { background: var(--orange-dark); color: var(--white); }
+    .btn-outline { background: transparent; color: var(--white); border: 2px solid var(--grey-600); }
+    .btn-outline:hover { border-color: var(--orange); color: var(--orange); }
+    .btn-print { background: var(--grey-700); color: var(--white); }
+    .btn-print:hover { background: var(--grey-600); }
+
+    footer { background: var(--grey-900); border-top: 3px solid var(--orange); padding: 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 40px; }
+    footer p { font-size: 13px; color: var(--grey-400); }
+
+    @media print {
+      nav, .actions, footer { display: none !important; }
+      body { background: white; color: black; }
+      .success-banner { background: #2e7d32; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">NEXFORM<span>3D</span></a>
+    <div class="nav-user">
+      Logged in as <strong id="navUser">—</strong>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- SUCCESS BANNER -->
+  <div class="success-banner">
+    <div class="check-circle">✓</div>
+    <h1>Order Confirmed</h1>
+    <p>Your production order has been successfully submitted to NexForm 3D.</p>
+    <div class="order-id-badge" id="orderIdBadge">ORDER: NXF-XXXXXX</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <p class="section-label">// Order Details</p>
+    <h2 class="section-title">Production Order Summary</h2>
+
+    <table class="order-table" id="orderTable">
+      <tr><td>Order ID</td><td id="oId">—</td></tr>
+      <tr><td>Customer</td><td id="oName">—</td></tr>
+      <tr><td>Email</td><td id="oEmail">—</td></tr>
+      <tr><td>Project Ref</td><td id="oRef">—</td></tr>
+      <tr><td>Material</td><td id="oMaterial">—</td></tr>
+      <tr><td>Colour</td><td id="oColour">—</td></tr>
+      <tr><td>Process</td><td id="oProcess">—</td></tr>
+      <tr><td>Quantity</td><td id="oQty">—</td></tr>
+      <tr><td>Unit Price</td><td id="oUnit">—</td></tr>
+      <tr><td>Notes</td><td id="oNotes">—</td></tr>
+      <tr><td>Order Date</td><td id="oDate">—</td></tr>
+      <tr><td>Estimated Total</td><td id="oTotal" class="total-td">—</td></tr>
+    </table>
+
+    <!-- PRODUCTION TIMELINE -->
+    <p class="section-label">// What Happens Next</p>
+    <h2 class="section-title">Production Timeline</h2>
+
+    <div class="timeline">
+      <div class="timeline-step done">
+        <div class="t-dot">✓</div>
+        <div class="t-title">Order Submitted</div>
+        <div class="t-desc">Your order has been received and logged in our production system.</div>
+        <div class="t-time">Completed — Now</div>
+      </div>
+      <div class="timeline-step pending">
+        <div class="t-dot">2</div>
+        <div class="t-title">File Analysis & Quoting</div>
+        <div class="t-desc">Our engineers will analyse your design file for printability and confirm the final quote.</div>
+        <div class="t-time">Within 4 hours (business hours)</div>
+      </div>
+      <div class="timeline-step pending">
+        <div class="t-dot">3</div>
+        <div class="t-title">Production Scheduled</div>
+        <div class="t-desc">Once approved, your job will be scheduled on the appropriate printer.</div>
+        <div class="t-time">Within 24 hours</div>
+      </div>
+      <div class="timeline-step pending">
+        <div class="t-dot">4</div>
+        <div class="t-title">Manufacturing</div>
+        <div class="t-desc">Your parts are printed, post-processed and quality inspected.</div>
+        <div class="t-time">1–7 days depending on material</div>
+      </div>
+      <div class="timeline-step pending">
+        <div class="t-dot">5</div>
+        <div class="t-title">Dispatch & Delivery</div>
+        <div class="t-desc">Parts are packed and dispatched via tracked courier service to your address.</div>
+        <div class="t-time">Next working day delivery</div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button class="btn btn-print" onclick="window.print()">🖨 Print Order Confirmation</button>
+      <a href="order.html" class="btn btn-outline">Place Another Order</a>
+      <a href="index.html" class="btn btn-primary">Return to Home</a>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--white);margin-bottom:6px;">NEXFORM<span style="color:var(--orange)">3D</span></p>
+      <p>Unit 4, Digital Manufacturing Park, Derby, DE1 3XT &nbsp;|&nbsp; info@nexform3d.co.uk</p>
+    </div>
+    <div style="text-align:right;">
+      <p>&copy; <span id="year"></span> NexForm 3D Ltd. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Auth check
+    if (sessionStorage.getItem('nexform_auth') !== 'true') {
+      window.location.href = 'login.html';
+    }
+
+    const user = sessionStorage.getItem('nexform_user') || 'user';
+    document.getElementById('navUser').textContent = user;
+
+    function logout() {
+      if (confirm('Log out and return to home?')) {
+        sessionStorage.clear();
+        window.location.href = 'index.html';
+      }
+    }
+
+    // Load order data
+    const raw = sessionStorage.getItem('nexform_order');
+    if (raw) {
+      const o = JSON.parse(raw);
+      document.getElementById('orderIdBadge').textContent = 'ORDER: ' + o.id;
+      document.getElementById('oId').textContent = o.id;
+      document.getElementById('oName').textContent = o.name;
+      document.getElementById('oEmail').textContent = o.email;
+      document.getElementById('oRef').textContent = o.ref || 'N/A';
+      document.getElementById('oMaterial').textContent = o.material;
+      document.getElementById('oColour').textContent = o.colour;
+      document.getElementById('oProcess').textContent = o.process;
+      document.getElementById('oQty').textContent = o.quantity;
+      document.getElementById('oUnit').textContent = '£' + parseFloat(o.unitPrice).toFixed(2);
+      document.getElementById('oNotes').textContent = o.notes || 'None';
+      document.getElementById('oDate').textContent = o.date;
+      document.getElementById('oTotal').textContent = '£' + parseFloat(o.total).toFixed(2);
+    } else {
+      // If accessed directly without an order, show placeholder
+      document.getElementById('orderIdBadge').textContent = 'ORDER: DEMO';
+      document.getElementById('oId').textContent = 'NXF-DEMO';
+      document.getElementById('oName').textContent = 'Demo User';
+      document.getElementById('oEmail').textContent = 'demo@nexform3d.co.uk';
+      document.getElementById('oRef').textContent = 'DEMO-001';
+      document.getElementById('oMaterial').textContent = 'PLA Plastic';
+      document.getElementById('oColour').textContent = 'Orange';
+      document.getElementById('oProcess').textContent = 'FDM Standard';
+      document.getElementById('oQty').textContent = '5';
+      document.getElementById('oUnit').textContent = '£12.00';
+      document.getElementById('oNotes').textContent = 'Demo order — no file submitted';
+      document.getElementById('oDate').textContent = new Date().toLocaleString('en-GB');
+      document.getElementById('oTotal').textContent = '£60.00';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | NexForm 3D Order Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --orange: #FF6B00;
+      --orange-dark: #CC5500;
+      --grey-900: #111111;
+      --grey-800: #1e1e1e;
+      --grey-700: #2d2d2d;
+      --grey-600: #3d3d3d;
+      --grey-400: #888888;
+      --grey-200: #cccccc;
+      --white: #f5f5f5;
+      --red: #e53935;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--grey-900);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* LEFT PANEL */
+    .left-panel {
+      background: var(--orange);
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      bottom: -80px; right: -80px;
+      width: 400px; height: 400px;
+      border: 60px solid rgba(0,0,0,0.1);
+      border-radius: 50%;
+    }
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      top: -40px; left: -40px;
+      width: 200px; height: 200px;
+      border: 40px solid rgba(0,0,0,0.08);
+      border-radius: 50%;
+    }
+    .panel-logo { font-family: 'Barlow Condensed', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: 2px; color: var(--grey-900); text-decoration: none; position: relative; z-index: 1; }
+    .panel-logo span { color: rgba(0,0,0,0.5); }
+
+    .panel-content { position: relative; z-index: 1; }
+    .panel-content h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 52px; font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1;
+      color: var(--grey-900);
+      margin-bottom: 20px;
+    }
+    .panel-content p { font-size: 16px; color: rgba(0,0,0,0.65); line-height: 1.7; max-width: 380px; }
+
+    .panel-features { position: relative; z-index: 1; }
+    .feature { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .feature-dot { width: 10px; height: 10px; background: var(--grey-900); flex-shrink: 0; }
+    .feature p { font-size: 14px; color: rgba(0,0,0,0.7); font-weight: 500; }
+
+    /* RIGHT PANEL */
+    .right-panel {
+      background: var(--grey-800);
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .right-panel nav-back { display: block; }
+    .back-link { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--grey-400); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 48px; transition: color 0.2s; }
+    .back-link:hover { color: var(--orange); }
+
+    .login-header { margin-bottom: 36px; }
+    .login-header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 40px; font-weight: 800; text-transform: uppercase; line-height: 1; margin-bottom: 8px; }
+    .login-header p { font-size: 14px; color: var(--grey-400); }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--grey-400); margin-bottom: 8px; }
+    .form-group input {
+      width: 100%; padding: 14px 16px;
+      background: var(--grey-700);
+      border: 2px solid var(--grey-600);
+      color: var(--white);
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus { border-color: var(--orange); }
+    .form-group input.error { border-color: var(--red); }
+
+    .error-msg {
+      background: rgba(229,57,53,0.1);
+      border: 1px solid var(--red);
+      border-left: 4px solid var(--red);
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #ff8a80;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .login-btn {
+      width: 100%; padding: 16px;
+      background: var(--orange);
+      color: var(--grey-900);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 16px; font-weight: 800;
+      letter-spacing: 3px; text-transform: uppercase;
+      border: none; cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+    .login-btn:hover { background: var(--orange-dark); color: var(--white); }
+
+    .attempts-warning {
+      font-size: 12px; color: var(--grey-400);
+      text-align: center; margin-top: 16px;
+    }
+    .attempts-warning span { color: var(--orange); font-weight: 500; }
+
+    .demo-hint {
+      background: var(--grey-700);
+      border-left: 3px solid var(--orange);
+      padding: 14px 16px;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--grey-400);
+    }
+    .demo-hint strong { color: var(--white); }
+
+    footer-note { display: block; margin-top: 40px; font-size: 12px; color: var(--grey-600); text-align: center; }
+
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 40px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <a href="index.html" class="panel-logo">NEXFORM<span>3D</span></a>
+    <div class="panel-content">
+      <h2>Production Portal</h2>
+      <p>Access your secure manufacturing dashboard to submit orders, track production status and manage your AM components.</p>
+    </div>
+    <div class="panel-features">
+      <div class="feature"><div class="feature-dot"></div><p>Secure encrypted login</p></div>
+      <div class="feature"><div class="feature-dot"></div><p>Upload STL/OBJ design files</p></div>
+      <div class="feature"><div class="feature-dot"></div><p>Configure material, colour & process</p></div>
+      <div class="feature"><div class="feature-dot"></div><p>Real-time order tracking</p></div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <a href="index.html" class="back-link">← Back to Home</a>
+
+    <div class="login-header">
+      <h1>Sign In</h1>
+      <p>Enter your credentials to access the order portal</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      ⚠ Incorrect username or password. Please try again.
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" placeholder="Enter your username" autocomplete="username"/>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password"/>
+    </div>
+
+    <button class="login-btn" onclick="handleLogin()">Access Portal →</button>
+
+    <p class="attempts-warning">
+      Login attempts remaining: <span id="attemptsLeft">3</span>
+    </p>
+
+    <!-- DEMO HINT FOR COURSEWORK MARKING -->
+    <div class="demo-hint">
+      <strong>Demo Credentials:</strong><br/>
+      Username: <strong>admin</strong> &nbsp;|&nbsp; Password: <strong>nexform2024</strong>
+    </div>
+
+    <footer-note>&copy; <span id="year"></span> NexForm 3D Ltd. Unauthorised access is prohibited.</footer-note>
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Credentials
+    const VALID_USERNAME = 'admin';
+    const VALID_PASSWORD = 'nexform2024';
+    let attemptsLeft = 3;
+    let isLocked = false;
+
+    // Allow Enter key to submit
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !isLocked) handleLogin();
+    });
+
+    function handleLogin() {
+      if (isLocked) {
+        showError('⛔ Account locked due to too many failed attempts. Please contact support.');
+        return;
+      }
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMsg = document.getElementById('errorMsg');
+
+      // Clear previous errors
+      document.getElementById('username').classList.remove('error');
+      document.getElementById('password').classList.remove('error');
+
+      // Basic validation
+      if (!username || !password) {
+        showError('⚠ Please enter both username and password.');
+        if (!username) document.getElementById('username').classList.add('error');
+        if (!password) document.getElementById('password').classList.add('error');
+        return;
+      }
+
+      // Security check
+      if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+        // SUCCESS — store session and redirect
+        sessionStorage.setItem('nexform_auth', 'true');
+        sessionStorage.setItem('nexform_user', username);
+        sessionStorage.setItem('nexform_login_time', new Date().toISOString());
+        errorMsg.style.display = 'none';
+        document.querySelector('.login-btn').textContent = '✓ Authenticated — Redirecting...';
+        document.querySelector('.login-btn').style.background = '#2e7d32';
+        setTimeout(() => { window.location.href = 'order.html'; }, 1200);
+      } else {
+        // FAILURE
+        attemptsLeft--;
+        document.getElementById('attemptsLeft').textContent = attemptsLeft;
+        document.getElementById('username').classList.add('error');
+        document.getElementById('password').classList.add('error');
+
+        if (attemptsLeft <= 0) {
+          isLocked = true;
+          showError('⛔ Account locked after 3 failed attempts. Please contact your system administrator.');
+          document.querySelector('.login-btn').disabled = true;
+          document.querySelector('.login-btn').style.background = '#555';
+          document.querySelector('.login-btn').textContent = 'Account Locked';
+        } else {
+          showError(`⚠ Incorrect username or password. ${attemptsLeft} attempt${attemptsLeft > 1 ? 's' : ''} remaining.`);
+        }
+        document.getElementById('password').value = '';
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

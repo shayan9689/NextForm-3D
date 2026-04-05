@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Order | NexForm 3D Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --orange: #FF6B00;
+      --orange-dark: #CC5500;
+      --grey-900: #111111;
+      --grey-800: #1e1e1e;
+      --grey-700: #2d2d2d;
+      --grey-600: #3d3d3d;
+      --grey-400: #888888;
+      --grey-200: #cccccc;
+      --white: #f5f5f5;
+      --green: #2e7d32;
+      --red: #e53935;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--grey-900); color: var(--white); font-family: 'Barlow', sans-serif; font-weight: 300; }
+
+    nav {
+      background: var(--grey-800); border-bottom: 3px solid var(--orange);
+      padding: 0 40px; display: flex; align-items: center; justify-content: space-between;
+      height: 64px; position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 2px; color: var(--white); text-decoration: none; }
+    .logo span { color: var(--orange); }
+    .nav-user { font-size: 13px; color: var(--grey-400); display: flex; align-items: center; gap: 16px; }
+    .nav-user strong { color: var(--orange); }
+    .logout-btn { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--grey-400); background: none; border: 1px solid var(--grey-600); padding: 6px 14px; cursor: pointer; transition: all 0.2s; }
+    .logout-btn:hover { color: var(--white); border-color: var(--white); }
+
+    /* LOCKED SCREEN */
+    #lockedScreen {
+      display: none;
+      min-height: calc(100vh - 64px);
+      align-items: center; justify-content: center;
+      flex-direction: column; text-align: center;
+      padding: 40px;
+    }
+    #lockedScreen.show { display: flex; }
+    #lockedScreen h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; text-transform: uppercase; color: var(--red); margin-bottom: 12px; }
+    #lockedScreen p { color: var(--grey-400); margin-bottom: 24px; }
+    .go-login { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; padding: 14px 32px; background: var(--orange); color: var(--grey-900); }
+
+    /* MAIN CONTENT */
+    #mainContent { display: none; }
+    #mainContent.show { display: block; }
+
+    .page-header { background: var(--grey-800); border-bottom: 1px solid var(--grey-700); padding: 40px; }
+    .breadcrumb { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--grey-400); margin-bottom: 12px; }
+    .breadcrumb a { color: var(--orange); text-decoration: none; }
+    .page-header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: 48px; font-weight: 800; text-transform: uppercase; }
+
+    /* PROGRESS */
+    .progress-bar {
+      background: var(--grey-800); border-bottom: 1px solid var(--grey-700);
+      padding: 20px 40px; display: flex; gap: 0; align-items: center;
+    }
+    .step { display: flex; align-items: center; flex: 1; }
+    .step-dot {
+      width: 32px; height: 32px;
+      background: var(--grey-700); border: 2px solid var(--grey-600);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700;
+      flex-shrink: 0; transition: all 0.3s;
+    }
+    .step.active .step-dot { background: var(--orange); border-color: var(--orange); color: var(--grey-900); }
+    .step.done .step-dot { background: var(--green); border-color: var(--green); color: white; }
+    .step-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey-400); margin-left: 10px; }
+    .step.active .step-label { color: var(--white); }
+    .step-line { flex: 1; height: 2px; background: var(--grey-700); margin: 0 12px; }
+
+    /* FORM */
+    .order-layout { display: grid; grid-template-columns: 1fr 380px; gap: 3px; padding: 3px; min-height: calc(100vh - 200px); }
+    .form-area { background: var(--grey-800); padding: 40px; }
+    .sidebar { background: var(--grey-700); padding: 32px; align-self: start; position: sticky; top: 80px; }
+
+    .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; text-transform: uppercase; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--grey-700); }
+
+    .form-group { margin-bottom: 24px; }
+    .form-group label { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--grey-400); margin-bottom: 8px; }
+    .required { color: var(--orange); }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px 16px;
+      background: var(--grey-900); border: 2px solid var(--grey-600);
+      color: var(--white); font-family: 'Barlow', sans-serif; font-size: 14px;
+      transition: border-color 0.2s; outline: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--orange); }
+    .form-group input.error, .form-group select.error { border-color: var(--red); }
+    .form-group select option { background: var(--grey-900); }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+
+    /* FILE UPLOAD */
+    .file-drop {
+      border: 2px dashed var(--grey-600);
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: var(--grey-900);
+      position: relative;
+    }
+    .file-drop:hover, .file-drop.drag-over { border-color: var(--orange); background: rgba(255,107,0,0.05); }
+    .file-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .file-icon { font-size: 36px; margin-bottom: 12px; }
+    .file-drop p { font-size: 14px; color: var(--grey-400); }
+    .file-drop strong { color: var(--orange); }
+    .file-name { margin-top: 12px; font-size: 13px; color: var(--green); display: none; }
+
+    /* COLOUR SWATCHES */
+    .colour-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .colour-swatch {
+      height: 52px; cursor: pointer; position: relative;
+      border: 3px solid transparent; transition: border-color 0.2s;
+    }
+    .colour-swatch.selected { border-color: var(--orange); }
+    .colour-swatch::after { content: attr(data-name); position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--grey-400); white-space: nowrap; }
+    .colour-wrap { margin-bottom: 30px; }
+
+    /* OPTIONS GRID */
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .option-card {
+      padding: 16px; background: var(--grey-900);
+      border: 2px solid var(--grey-600); cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .option-card:hover { border-color: var(--grey-400); }
+    .option-card.selected { border-color: var(--orange); background: rgba(255,107,0,0.05); }
+    .option-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+    .option-card p { font-size: 12px; color: var(--grey-400); }
+    .option-card .price-add { font-size: 12px; color: var(--orange); margin-top: 6px; font-weight: 500; }
+
+    /* QUANTITY */
+    .qty-control { display: flex; align-items: center; gap: 0; }
+    .qty-btn { width: 44px; height: 44px; background: var(--grey-900); border: 2px solid var(--grey-600); color: var(--white); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
+    .qty-btn:hover { background: var(--orange); color: var(--grey-900); }
+    .qty-input { width: 80px; height: 44px; background: var(--grey-900); border: 2px solid var(--grey-600); border-left: none; border-right: none; color: var(--white); text-align: center; font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; }
+
+    /* SIDEBAR */
+    .sidebar-title { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--grey-600); }
+    .summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--grey-600); font-size: 13px; }
+    .summary-row .label { color: var(--grey-400); }
+    .summary-row .value { color: var(--white); font-weight: 500; text-align: right; max-width: 160px; }
+    .total-row { display: flex; justify-content: space-between; align-items: baseline; padding: 16px 0; margin-top: 4px; }
+    .total-row .label { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    .total-price { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 800; color: var(--orange); }
+    .price-note { font-size: 11px; color: var(--grey-400); margin-bottom: 20px; }
+
+    /* SUBMIT */
+    .submit-btn { width: 100%; padding: 16px; background: var(--orange); color: var(--grey-900); font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; border: none; cursor: pointer; transition: background 0.2s; }
+    .submit-btn:hover { background: var(--orange-dark); color: var(--white); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .validation-msg { font-size: 12px; color: var(--red); margin-top: 6px; display: none; }
+
+    @media (max-width: 900px) {
+      .order-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .form-row { grid-template-columns: 1fr; }
+      .options-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">NEXFORM<span>3D</span></a>
+    <div class="nav-user">
+      Logged in as <strong id="navUser">—</strong>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- LOCKED SCREEN -->
+  <div id="lockedScreen">
+    <h2>🔒 Access Denied</h2>
+    <p>You must be logged in to access the order portal.</p>
+    <a href="login.html" class="go-login">Go to Login →</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div id="mainContent">
+
+    <div class="page-header">
+      <div class="breadcrumb"><a href="index.html">Home</a> → New Order</div>
+      <h1>New Production Order</h1>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-bar">
+      <div class="step active" id="step1">
+        <div class="step-dot">1</div>
+        <span class="step-label">Configuration</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step2">
+        <div class="step-dot">2</div>
+        <span class="step-label">Review</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step" id="step3">
+        <div class="step-dot">3</div>
+        <span class="step-label">Confirm</span>
+      </div>
+    </div>
+
+    <div class="order-layout">
+      <!-- FORM -->
+      <div class="form-area">
+
+        <!-- SECTION: FILE UPLOAD -->
+        <p class="section-label">// Step 1</p>
+        <h2 class="section-title">Upload Your Design File</h2>
+        <div class="form-group">
+          <label>Design File <span class="required">*</span></label>
+          <div class="file-drop" id="fileDrop">
+            <input type="file" id="designFile" accept=".stl,.obj,.step,.iges" onchange="handleFileSelect(this)"/>
+            <div class="file-icon">📁</div>
+            <p>Drag & drop your file here, or <strong>click to browse</strong></p>
+            <p style="font-size:12px; margin-top:6px;">Accepted: STL, OBJ, STEP, IGES</p>
+            <p class="file-name" id="fileName"></p>
+          </div>
+          <div class="validation-msg" id="fileError">Please upload a design file to proceed.</div>
+        </div>
+
+        <!-- SECTION: MATERIAL -->
+        <p class="section-label" style="margin-top:36px;">// Step 2</p>
+        <h2 class="section-title">Select Material</h2>
+        <div class="options-grid" id="materialOptions">
+          <div class="option-card selected" data-material="PLA" data-base="12" onclick="selectMaterial(this)">
+            <h4>PLA Plastic</h4>
+            <p>Biodegradable, low-cost, ideal for visual prototypes and concept models.</p>
+            <p class="price-add">Base: £12.00/unit</p>
+          </div>
+          <div class="option-card" data-material="ABS" data-base="18" onclick="selectMaterial(this)">
+            <h4>ABS Plastic</h4>
+            <p>Heat-resistant, tough thermoplastic for functional and end-use parts.</p>
+            <p class="price-add">Base: £18.00/unit</p>
+          </div>
+          <div class="option-card" data-material="Resin" data-base="28" onclick="selectMaterial(this)">
+            <h4>Engineering Resin</h4>
+            <p>Ultra-high detail, smooth surface finish for precise visual models.</p>
+            <p class="price-add">Base: £28.00/unit</p>
+          </div>
+          <div class="option-card" data-material="Metal" data-base="95" onclick="selectMaterial(this)">
+            <h4>Metal (Ti / Steel)</h4>
+            <p>DMLS/SLS process for industrial-grade titanium and stainless steel parts.</p>
+            <p class="price-add">Base: £95.00/unit</p>
+          </div>
+        </div>
+        <div class="validation-msg" id="materialError">Please select a material.</div>
+
+        <!-- SECTION: COLOUR -->
+        <p class="section-label" style="margin-top:36px;">// Step 3</p>
+        <h2 class="section-title">Select Colour</h2>
+        <div class="colour-wrap">
+          <div class="colour-grid" id="colourOptions">
+            <div class="colour-swatch selected" style="background:#f5f5f5;" data-name="White" onclick="selectColour(this)"></div>
+            <div class="colour-swatch" style="background:#1a1a1a;" data-name="Black" onclick="selectColour(this)"></div>
+            <div class="colour-swatch" style="background:#FF6B00;" data-name="Orange" onclick="selectColour(this)"></div>
+            <div class="colour-swatch" style="background:#1565c0;" data-name="Blue" onclick="selectColour(this)"></div>
+            <div class="colour-swatch" style="background:#b71c1c;" data-name="Red" onclick="selectColour(this)"></div>
+            <div class="colour-swatch" style="background:#2e7d32;" data-name="Green" onclick="selectColour(this)"></div>
+            <div class="colour-swatch" style="background:#888888;" data-name="Grey" onclick="selectColour(this)"></div>
+            <div class="colour-swatch" style="background:linear-gradient(135deg,#aaa,#eee);" data-name="Natural" onclick="selectColour(this)"></div>
+          </div>
+        </div>
+
+        <!-- SECTION: PROCESS -->
+        <p class="section-label" style="margin-top:36px;">// Step 4</p>
+        <h2 class="section-title">Select Print Process</h2>
+        <div class="options-grid" id="processOptions">
+          <div class="option-card selected" data-process="FDM" data-add="0" onclick="selectProcess(this)">
+            <h4>FDM (Standard)</h4>
+            <p>Fused Deposition Modelling. Layer height 0.2mm. Best for functional parts.</p>
+            <p class="price-add">No additional cost</p>
+          </div>
+          <div class="option-card" data-process="FDM-Fine" data-add="8" onclick="selectProcess(this)">
+            <h4>FDM (Fine)</h4>
+            <p>FDM at 0.1mm layer height for improved surface finish.</p>
+            <p class="price-add">+£8.00/unit</p>
+          </div>
+          <div class="option-card" data-process="SLA" data-add="15" onclick="selectProcess(this)">
+            <h4>SLA Resin</h4>
+            <p>Stereolithography. Ultra-fine 0.025mm layers. Smooth, detailed finish.</p>
+            <p class="price-add">+£15.00/unit</p>
+          </div>
+          <div class="option-card" data-process="DMLS" data-add="45" onclick="selectProcess(this)">
+            <h4>DMLS / SLS Metal</h4>
+            <p>Direct Metal Laser Sintering for industrial metal components.</p>
+            <p class="price-add">+£45.00/unit</p>
+          </div>
+        </div>
+        <div class="validation-msg" id="processError">Please select a process.</div>
+
+        <!-- SECTION: QUANTITY & DETAILS -->
+        <p class="section-label" style="margin-top:36px;">// Step 5</p>
+        <h2 class="section-title">Quantity & Details</h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Quantity <span class="required">*</span></label>
+            <div class="qty-control">
+              <button class="qty-btn" onclick="adjustQty(-1)">−</button>
+              <input type="number" class="qty-input" id="quantity" value="1" min="1" max="500" oninput="updateSummary()"/>
+              <button class="qty-btn" onclick="adjustQty(1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Project Reference</label>
+            <input type="text" id="projectRef" placeholder="e.g. PROJ-2024-001"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Customer Name <span class="required">*</span></label>
+          <input type="text" id="custName" placeholder="Full name"/>
+          <div class="validation-msg" id="nameError">Please enter your name.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address <span class="required">*</span></label>
+          <input type="email" id="custEmail" placeholder="your@email.com"/>
+          <div class="validation-msg" id="emailError">Please enter a valid email address.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Additional Notes</label>
+          <textarea id="notes" placeholder="Any special requirements, finish specifications, or delivery notes..."></textarea>
+        </div>
+
+      </div>
+
+      <!-- SIDEBAR SUMMARY -->
+      <div class="sidebar">
+        <div class="sidebar-title">Order Summary</div>
+        <div class="summary-row"><span class="label">Material</span><span class="value" id="sumMaterial">PLA Plastic</span></div>
+        <div class="summary-row"><span class="label">Colour</span><span class="value" id="sumColour">White</span></div>
+        <div class="summary-row"><span class="label">Process</span><span class="value" id="sumProcess">FDM Standard</span></div>
+        <div class="summary-row"><span class="label">Quantity</span><span class="value" id="sumQty">1</span></div>
+        <div class="summary-row"><span class="label">Unit Price</span><span class="value" id="sumUnit">£12.00</span></div>
+        <div class="total-row">
+          <span class="label">Total Estimate</span>
+          <span class="total-price" id="sumTotal">£12.00</span>
+        </div>
+        <p class="price-note">* Estimate only. Final price confirmed after file analysis. Lead time calculated after submission.</p>
+        <button class="submit-btn" onclick="submitOrder()">Review & Confirm Order →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --- AUTH GATE ---
+    (function() {
+      const auth = sessionStorage.getItem('nexform_auth');
+      if (auth !== 'true') {
+        document.getElementById('lockedScreen').classList.add('show');
+      } else {
+        document.getElementById('mainContent').classList.add('show');
+        const user = sessionStorage.getItem('nexform_user') || 'user';
+        document.getElementById('navUser').textContent = user;
+      }
+    })();
+
+    function logout() {
+      if (confirm('Are you sure you want to log out?')) {
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+      }
+    }
+
+    // --- STATE ---
+    let selectedMaterial = 'PLA';
+    let selectedMaterialBase = 12;
+    let selectedColour = 'White';
+    let selectedProcess = 'FDM';
+    let selectedProcessAdd = 0;
+    let fileSelected = false;
+
+    // --- MATERIAL ---
+    function selectMaterial(el) {
+      document.querySelectorAll('#materialOptions .option-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedMaterial = el.dataset.material;
+      selectedMaterialBase = parseFloat(el.dataset.base);
+      updateSummary();
+    }
+
+    // --- COLOUR ---
+    function selectColour(el) {
+      document.querySelectorAll('#colourOptions .colour-swatch').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedColour = el.dataset.name;
+      updateSummary();
+    }
+
+    // --- PROCESS ---
+    function selectProcess(el) {
+      document.querySelectorAll('#processOptions .option-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedProcess = el.dataset.process;
+      selectedProcessAdd = parseFloat(el.dataset.add);
+      updateSummary();
+    }
+
+    // --- QTY ---
+    function adjustQty(delta) {
+      const input = document.getElementById('quantity');
+      let val = parseInt(input.value) || 1;
+      val = Math.max(1, Math.min(500, val + delta));
+      input.value = val;
+      updateSummary();
+    }
+
+    // --- FILE ---
+    function handleFileSelect(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const allowed = ['.stl','.obj','.step','.iges'];
+        const ext = '.' + file.name.split('.').pop().toLowerCase();
+        if (!allowed.includes(ext)) {
+          alert('Invalid file type. Please upload STL, OBJ, STEP or IGES files only.');
+          input.value = '';
+          return;
+        }
+        fileSelected = true;
+        document.getElementById('fileName').textContent = '✓ ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+        document.getElementById('fileName').style.display = 'block';
+        document.getElementById('fileError').style.display = 'none';
+      }
+    }
+
+    // --- SUMMARY UPDATE ---
+    function updateSummary() {
+      const qty = parseInt(document.getElementById('quantity').value) || 1;
+      const unitPrice = selectedMaterialBase + selectedProcessAdd;
+      const total = unitPrice * qty;
+
+      document.getElementById('sumMaterial').textContent = selectedMaterial + ' Plastic';
+      if (selectedMaterial === 'Metal') document.getElementById('sumMaterial').textContent = 'Metal (Ti/Steel)';
+      if (selectedMaterial === 'Resin') document.getElementById('sumMaterial').textContent = 'Engineering Resin';
+
+      document.getElementById('sumColour').textContent = selectedColour;
+      document.getElementById('sumProcess').textContent = selectedProcess;
+      document.getElementById('sumQty').textContent = qty;
+      document.getElementById('sumUnit').textContent = '£' + unitPrice.toFixed(2);
+      document.getElementById('sumTotal').textContent = '£' + total.toFixed(2);
+    }
+
+    // --- VALIDATION ---
+    function validateForm() {
+      let valid = true;
+
+      if (!fileSelected) {
+        document.getElementById('fileError').style.display = 'block';
+        valid = false;
+      }
+
+      const name = document.getElementById('custName').value.trim();
+      if (!name) {
+        document.getElementById('nameError').style.display = 'block';
+        document.getElementById('custName').classList.add('error');
+        valid = false;
+      } else {
+        document.getElementById('nameError').style.display = 'none';
+        document.getElementById('custName').classList.remove('error');
+      }
+
+      const email = document.getElementById('custEmail').value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email || !emailRegex.test(email)) {
+        document.getElementById('emailError').style.display = 'block';
+        document.getElementById('custEmail').classList.add('error');
+        valid = false;
+      } else {
+        document.getElementById('emailError').style.display = 'none';
+        document.getElementById('custEmail').classList.remove('error');
+      }
+
+      return valid;
+    }
+
+    // --- SUBMIT ---
+    function submitOrder() {
+      if (!validateForm()) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        alert('Please complete all required fields before proceeding.');
+        return;
+      }
+
+      const qty = parseInt(document.getElementById('quantity').value) || 1;
+      const unitPrice = selectedMaterialBase + selectedProcessAdd;
+      const total = unitPrice * qty;
+
+      const confirmMsg = [
+        '— ORDER REVIEW —\n',
+        'Customer: ' + document.getElementById('custName').value.trim(),
+        'Email: ' + document.getElementById('custEmail').value.trim(),
+        'Material: ' + selectedMaterial,
+        'Colour: ' + selectedColour,
+        'Process: ' + selectedProcess,
+        'Quantity: ' + qty,
+        'Estimated Total: £' + total.toFixed(2),
+        '\nDo you confirm this order?'
+      ].join('\n');
+
+      const confirmed = confirm(confirmMsg);
+
+      if (confirmed) {
+        // Store order data
+        const orderData = {
+          id: 'NXF-' + Date.now().toString().slice(-6),
+          name: document.getElementById('custName').value.trim(),
+          email: document.getElementById('custEmail').value.trim(),
+          material: selectedMaterial,
+          colour: selectedColour,
+          process: selectedProcess,
+          quantity: qty,
+          unitPrice: unitPrice,
+          total: total,
+          notes: document.getElementById('notes').value.trim(),
+          ref: document.getElementById('projectRef').value.trim(),
+          date: new Date().toLocaleString('en-GB')
+        };
+        sessionStorage.setItem('nexform_order', JSON.stringify(orderData));
+        window.location.href = 'confirmation.html';
+      }
+    }
+
+    // Initial summary render
+    updateSummary();
+  </script>
+</body>
+</html>

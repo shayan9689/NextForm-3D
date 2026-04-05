@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Showroom | NexForm 3D</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --orange: #FF6B00;
+      --orange-dark: #CC5500;
+      --grey-900: #111111;
+      --grey-800: #1e1e1e;
+      --grey-700: #2d2d2d;
+      --grey-600: #3d3d3d;
+      --grey-400: #888888;
+      --grey-200: #cccccc;
+      --white: #f5f5f5;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--grey-900); color: var(--white); font-family: 'Barlow', sans-serif; font-weight: 300; }
+
+    nav {
+      background: var(--grey-800);
+      border-bottom: 3px solid var(--orange);
+      padding: 0 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 800; letter-spacing: 2px; color: var(--white); text-decoration: none; }
+    .logo span { color: var(--orange); }
+    nav ul { list-style: none; display: flex; gap: 8px; }
+    nav ul li a { font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey-200); text-decoration: none; padding: 8px 16px; transition: color 0.2s, background 0.2s; }
+    nav ul li a:hover, nav ul li a.active { color: var(--orange); background: rgba(255,107,0,0.08); }
+    .nav-cta { background: var(--orange) !important; color: var(--grey-900) !important; font-weight: 700 !important; }
+    .nav-cta:hover { background: var(--orange-dark) !important; color: var(--white) !important; }
+
+    .page-header {
+      background: var(--grey-800);
+      border-bottom: 1px solid var(--grey-700);
+      padding: 60px 40px 40px;
+    }
+    .page-header p { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+    .page-header h1 { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(40px, 6vw, 72px); font-weight: 800; text-transform: uppercase; line-height: 1; }
+    .page-header .sub { font-size: 16px; color: var(--grey-400); margin-top: 16px; max-width: 600px; line-height: 1.6; }
+
+    /* FILTER BAR */
+    .filter-bar {
+      padding: 24px 40px;
+      background: var(--grey-900);
+      border-bottom: 1px solid var(--grey-700);
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    }
+    .filter-label { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--grey-400); margin-right: 8px; }
+    .filter-btn {
+      font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 8px 18px; background: transparent;
+      border: 1px solid var(--grey-700); color: var(--grey-400);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active { background: var(--orange); border-color: var(--orange); color: var(--grey-900); }
+
+    /* GRID */
+    .showroom {
+      padding: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 3px;
+    }
+    .product-card {
+      background: var(--grey-800);
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .product-card:hover { transform: translateY(-4px); }
+    .product-img {
+      width: 100%; height: 220px;
+      background: var(--grey-700);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 72px;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-img::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.6) 100%);
+    }
+    .product-badge {
+      position: absolute; top: 14px; left: 14px;
+      background: var(--orange); color: var(--grey-900);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; padding: 4px 10px;
+      z-index: 1;
+    }
+    .product-info { padding: 24px; }
+    .product-info h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .product-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .meta-tag {
+      font-size: 11px; font-weight: 500; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--grey-400);
+      background: var(--grey-700);
+      padding: 3px 8px;
+    }
+    .product-info p { font-size: 14px; color: var(--grey-400); line-height: 1.6; margin-bottom: 16px; }
+    .product-specs {
+      border-top: 1px solid var(--grey-700);
+      padding-top: 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .spec { font-size: 12px; }
+    .spec-label { color: var(--grey-400); display: block; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .spec-value { color: var(--white); font-weight: 500; }
+
+    /* BENEFITS TABLE */
+    .benefits-section {
+      padding: 60px 40px;
+      background: var(--grey-800);
+      border-top: 1px solid var(--grey-700);
+    }
+    .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+    .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; text-transform: uppercase; margin-bottom: 30px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead tr { background: var(--orange); color: var(--grey-900); }
+    thead th { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 14px 20px; text-align: left; }
+    tbody tr { border-bottom: 1px solid var(--grey-700); transition: background 0.15s; }
+    tbody tr:hover { background: var(--grey-700); }
+    tbody td { padding: 14px 20px; color: var(--grey-200); }
+    tbody td:first-child { color: var(--white); font-weight: 500; }
+
+    /* CTA BANNER */
+    .cta-banner {
+      background: var(--orange);
+      padding: 60px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+    .cta-banner h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 42px; font-weight: 800; text-transform: uppercase; color: var(--grey-900); }
+    .cta-banner p { color: var(--grey-800); font-size: 16px; margin-top: 8px; }
+    .btn-dark { background: var(--grey-900); color: var(--white); font-family: 'Barlow Condensed', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-decoration: none; padding: 16px 36px; display: inline-block; transition: background 0.2s; white-space: nowrap; }
+    .btn-dark:hover { background: var(--grey-800); }
+
+    footer {
+      background: var(--grey-900); border-top: 3px solid var(--orange);
+      padding: 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    }
+    footer p { font-size: 13px; color: var(--grey-400); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">NEXFORM<span>3D</span></a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="showroom.html" class="active">Showroom</a></li>
+      <li><a href="login.html" class="nav-cta">Order Now</a></li>
+    </ul>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <p>// Product Catalogue</p>
+    <h1>Online Showroom</h1>
+    <p class="sub">Browse our portfolio of precision AM components. Each product below has been manufactured using our online production system, demonstrating the quality and capability of NexForm 3D.</p>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <span class="filter-label">Filter by:</span>
+    <button class="filter-btn active" onclick="filterProducts('all', this)">All</button>
+    <button class="filter-btn" onclick="filterProducts('pla', this)">PLA</button>
+    <button class="filter-btn" onclick="filterProducts('abs', this)">ABS</button>
+    <button class="filter-btn" onclick="filterProducts('resin', this)">Resin</button>
+    <button class="filter-btn" onclick="filterProducts('metal', this)">Metal</button>
+  </div>
+
+  <!-- PRODUCT GRID -->
+  <div class="showroom" id="productGrid">
+
+    <div class="product-card" data-material="metal">
+      <div class="product-img">⚙️</div>
+      <div class="product-badge">Metal / DMLS</div>
+      <div class="product-info">
+        <h3>Automotive Dashboard Frame</h3>
+        <div class="product-meta">
+          <span class="meta-tag">Titanium</span>
+          <span class="meta-tag">DMLS</span>
+          <span class="meta-tag">Industrial</span>
+        </div>
+        <p>High-strength titanium alloy dashboard structural frame manufactured via Direct Metal Laser Sintering for a premium automotive client. Complex internal geometry achieved through DMLS.</p>
+        <div class="product-specs">
+          <div class="spec"><span class="spec-label">Dimensions</span><span class="spec-value">480 × 310 × 90 mm</span></div>
+          <div class="spec"><span class="spec-label">Material</span><span class="spec-value">Ti-6Al-4V</span></div>
+          <div class="spec"><span class="spec-label">Layer Height</span><span class="spec-value">0.03 mm</span></div>
+          <div class="spec"><span class="spec-label">Lead Time</span><span class="spec-value">5 Days</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" data-material="resin">
+      <div class="product-img">🔬</div>
+      <div class="product-badge">Resin / SLA</div>
+      <div class="product-info">
+        <h3>Precision Prototype Housing</h3>
+        <div class="product-meta">
+          <span class="meta-tag">Grey Resin</span>
+          <span class="meta-tag">SLA</span>
+          <span class="meta-tag">Prototype</span>
+        </div>
+        <p>Consumer electronics housing produced in engineering-grade grey resin with extremely fine surface finish (Ra 0.8 µm). Used for functional form-and-fit validation before tooling.</p>
+        <div class="product-specs">
+          <div class="spec"><span class="spec-label">Dimensions</span><span class="spec-value">120 × 80 × 45 mm</span></div>
+          <div class="spec"><span class="spec-label">Material</span><span class="spec-value">Grey Pro Resin</span></div>
+          <div class="spec"><span class="spec-label">Layer Height</span><span class="spec-value">0.025 mm</span></div>
+          <div class="spec"><span class="spec-label">Lead Time</span><span class="spec-value">2 Days</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" data-material="abs">
+      <div class="product-img">🏭</div>
+      <div class="product-badge">ABS / FDM</div>
+      <div class="product-info">
+        <h3>Industrial Bracket Assembly</h3>
+        <div class="product-meta">
+          <span class="meta-tag">Black ABS</span>
+          <span class="meta-tag">FDM</span>
+          <span class="meta-tag">Functional</span>
+        </div>
+        <p>Functional load-bearing bracket for conveyor system in black ABS. Heat-resistant up to 100°C with excellent impact strength. Post-processed with acetone smoothing for improved surface quality.</p>
+        <div class="product-specs">
+          <div class="spec"><span class="spec-label">Dimensions</span><span class="spec-value">200 × 150 × 60 mm</span></div>
+          <div class="spec"><span class="spec-label">Material</span><span class="spec-value">ABS+</span></div>
+          <div class="spec"><span class="spec-label">Layer Height</span><span class="spec-value">0.2 mm</span></div>
+          <div class="spec"><span class="spec-label">Lead Time</span><span class="spec-value">1 Day</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" data-material="pla">
+      <div class="product-img">🌿</div>
+      <div class="product-badge">PLA / FDM</div>
+      <div class="product-info">
+        <h3>Medical Device Concept Model</h3>
+        <div class="product-meta">
+          <span class="meta-tag">White PLA</span>
+          <span class="meta-tag">FDM</span>
+          <span class="meta-tag">Visual Model</span>
+        </div>
+        <p>Visual concept model for a medical device submitted for approval. White PLA with 20% infill, printed at 0.1mm resolution for detailed surface representation during design reviews.</p>
+        <div class="product-specs">
+          <div class="spec"><span class="spec-label">Dimensions</span><span class="spec-value">95 × 60 × 30 mm</span></div>
+          <div class="spec"><span class="spec-label">Material</span><span class="spec-value">PLA Pro</span></div>
+          <div class="spec"><span class="spec-label">Layer Height</span><span class="spec-value">0.1 mm</span></div>
+          <div class="spec"><span class="spec-label">Lead Time</span><span class="spec-value">1 Day</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" data-material="metal">
+      <div class="product-img">🔩</div>
+      <div class="product-badge">Metal / SLS</div>
+      <div class="product-info">
+        <h3>Aerospace Mounting Bracket</h3>
+        <div class="product-meta">
+          <span class="meta-tag">Stainless Steel</span>
+          <span class="meta-tag">SLS</span>
+          <span class="meta-tag">Aerospace</span>
+        </div>
+        <p>316L stainless steel mounting bracket for aerospace application. Topology-optimised design reduces weight by 35% vs. traditional machining while maintaining full structural integrity.</p>
+        <div class="product-specs">
+          <div class="spec"><span class="spec-label">Dimensions</span><span class="spec-value">180 × 90 × 55 mm</span></div>
+          <div class="spec"><span class="spec-label">Material</span><span class="spec-value">316L Steel</span></div>
+          <div class="spec"><span class="spec-label">Layer Height</span><span class="spec-value">0.04 mm</span></div>
+          <div class="spec"><span class="spec-label">Lead Time</span><span class="spec-value">7 Days</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" data-material="resin">
+      <div class="product-img">💎</div>
+      <div class="product-badge">Resin / SLA</div>
+      <div class="product-info">
+        <h3>Jewellery Investment Cast</h3>
+        <div class="product-meta">
+          <span class="meta-tag">Castable Resin</span>
+          <span class="meta-tag">SLA</span>
+          <span class="meta-tag">Luxury</span>
+        </div>
+        <p>Ultra-fine castable resin ring master produced for lost-wax casting into 18k gold. Intricate floral pattern with 0.2mm wall thickness — only achievable through SLA 3D printing.</p>
+        <div class="product-specs">
+          <div class="spec"><span class="spec-label">Dimensions</span><span class="spec-value">22 × 22 × 8 mm</span></div>
+          <div class="spec"><span class="spec-label">Material</span><span class="spec-value">Castable Wax</span></div>
+          <div class="spec"><span class="spec-label">Layer Height</span><span class="spec-value">0.01 mm</span></div>
+          <div class="spec"><span class="spec-label">Lead Time</span><span class="spec-value">2 Days</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BENEFITS TABLE -->
+  <section class="benefits-section">
+    <p class="section-label">// Platform Advantages</p>
+    <h2 class="section-title">Benefits of Using the Online Portal</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Benefit</th>
+          <th>Traditional Manufacturing</th>
+          <th>NexForm 3D Online Portal</th>
+          <th>Improvement</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Order Placement</td><td>Phone / email / site visit</td><td>24/7 online self-service</td><td>Always available</td></tr>
+        <tr><td>Quote Generation</td><td>1–3 business days</td><td>Instant (real-time)</td><td>~100% faster</td></tr>
+        <tr><td>Design Iterations</td><td>Requires manual resubmission</td><td>Upload new STL file instantly</td><td>Seamless</td></tr>
+        <tr><td>Material Selection</td><td>Limited to stock on-hand</td><td>PLA, ABS, Resin, Metal options</td><td>Greater flexibility</td></tr>
+        <tr><td>Cost Overhead</td><td>High (sales staff, visits)</td><td>Low (automated system)</td><td>Up to 40% savings</td></tr>
+        <tr><td>Order Tracking</td><td>Manual follow-up required</td><td>Live dashboard tracking</td><td>Full transparency</td></tr>
+        <tr><td>IP Security</td><td>Physical files, risk of loss</td><td>Encrypted portal upload</td><td>Fully secured</td></tr>
+        <tr><td>Geographic Access</td><td>Local only</td><td>Global internet access</td><td>Worldwide reach</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-banner">
+    <div>
+      <h2>Ready to Place Your Order?</h2>
+      <p>Log in to the production portal to upload your design and configure your print.</p>
+    </div>
+    <a href="login.html" class="btn-dark">Login to Order Portal →</a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>
+      <p style="font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:var(--white);margin-bottom:6px;">NEXFORM<span style="color:var(--orange)">3D</span></p>
+      <p>Unit 4, Digital Manufacturing Park, Derby, DE1 3XT</p>
+    </div>
+    <div style="text-align:right;">
+      <p>Last Updated: <span id="lastUpdated"></span></p>
+      <p style="margin-top:6px;">&copy; <span id="year"></span> NexForm 3D Ltd. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    function filterProducts(material, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.product-card').forEach(card => {
+        if (material === 'all' || card.dataset.material === material) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
