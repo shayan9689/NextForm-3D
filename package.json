@@ -14,5 +14,8 @@
     "industrial"
   ],
   "author": "",
+  "devDependencies": {
+    "vite": "^6.0.0"
+  },
   "license": "ISC"
 }
